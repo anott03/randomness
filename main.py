@@ -22,25 +22,28 @@ def n():
     arr = [str(x) for x in arr]
     s = "".join(arr)
     i = int(s, 2)
-    return i + 1
+    return i
 
 
-bins = defaultdict(lambda: [])
+bins = [0 for _ in range(16)]
+print(bins)
 for count in range(10000):
-    if (count % 10 == 0):
+    if (count % 100 == 0):
         print(count)
+
     i = n()
     q = i // 16
     r = i % 16
-    bins[q].append(i)
 
+    try:
+        bins[q] += 1
+    except IndexError:
+        print(i)
+        print(q, r)
+        print(f"bins[{q}]", bins[q])
 
-x = list(bins.keys())
-y = [len(x) for x in bins.values()]
-
-print(x)
-for i in range(len(x)):
-    print(x[i], y[i])
+x = range(16)
+y = bins
 
 plt.scatter(x, y, label=y)
 ax = plt.gca()
