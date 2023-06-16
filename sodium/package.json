@@ -1,0 +1,15 @@
+{
+  "name": "sodium",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sodium-plus": "^0.9.0"
+  }
+}
