@@ -11,3 +11,5 @@ services:
     working_dir: /app/sodium
     volumes:
       - ./sodium:/app/sodium
+    ports:
+      - "3001:3001"
