@@ -1,7 +1,10 @@
 "use client";
 
 import { QueryClient, QueryClientProvider, useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { LegacyRef, useMemo, useRef, useState } from "react";
+import { lazy, LegacyRef, Suspense, useMemo, useRef, useState } from "react";
+import Plot from 'react-plotly.js';
+
+let MyPlot = lazy(() => import("../components/my-plot"));
 
 const useMutateQuantum = () => {
     const queryClient = useQueryClient();
@@ -47,7 +50,7 @@ function PageContents() {
       [quantumQuery, sodiumQuery, quantumMutation, sodiumMutation])
 
   return (
-    <main className="w-screen h-screen flex flex-col p-3 bg-black text-white">
+    <main className="w-screen min-h-screen flex flex-col p-3 bg-black text-white">
         <form className="flex flex-row py-2 gap-2" ref={formRef} onSubmit={(e) => {
             e.preventDefault();
             quantumMutation.mutate(numNums);
@@ -63,9 +66,13 @@ function PageContents() {
             <button disabled={dataLoading} type="submit" className="p-2 bg-violet-500 hover:bg-violet-600">Go</button>
         </form>
         <p className="text-xl font-bold">Quantum Random Numbers</p>
-        { dataLoading ? <p className="text-xl">Loading...</p> : quantumQuery.data.bins.map((n: number, i:number) => <p key={i}>{n}</p>) }
+        { dataLoading ? <p className="text-xl">Loading...</p> : <Suspense fallback={<p>Loading...</p>}>
+            <MyPlot bins={quantumQuery.data.bins} />
+        </Suspense>}
         <p className="text-xl font-bold">Sodium Random Numbers</p>
-        { dataLoading ? <p className="text-xl">Loading...</p> : sodiumQuery.data.bins.map((n: number, i:number) => <p key={i}>{n}</p>) }
+        { dataLoading ? <p className="text-xl">Loading...</p> : <Suspense fallback={<p>Loading...</p>}>
+            <MyPlot bins={sodiumQuery.data.bins} />
+        </Suspense>}
     </main>
   );
 }
