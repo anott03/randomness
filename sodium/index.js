@@ -21,9 +21,15 @@ async function binRandomNums(n) {
 }
 
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
-app.get("/:n", async (req, res) => {
+let corsOptions = {
+    origin: "*",
+    optionsSuccessStatus: 200,
+}
+
+app.get("/:n", cors(corsOptions), async (req, res) => {
     const n = Number.parseInt(req.params.n);
     const bins = await binRandomNums(n);
     res.status(200).json({ bins });

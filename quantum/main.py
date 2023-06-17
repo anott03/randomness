@@ -1,4 +1,8 @@
 from qiskit import QuantumCircuit, Aer, transpile
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+aer_simulator = Aer.get_backend("aer_simulator")
 
 
 def get_random_numbers(n: int, sim) -> list:
@@ -12,31 +16,42 @@ def get_random_numbers(n: int, sim) -> list:
             .get_memory()]
 
 
-sim = Aer.get_backend("aer_simulator")
-
-
-def n():
-    arr = get_random_numbers(8, sim)
+def generate_num():
+    arr = get_random_numbers(8, aer_simulator)
     arr = [str(x) for x in arr]
     s = "".join(arr)
     i = int(s, 2)
     return i
 
 
-bins = [0 for _ in range(16)]
-for count in range(20):
-    i = n()
-    q = i // 16
-    r = i % 16
+def binNums(n):
+    bins = [0 for _ in range(16)]
+    for count in range(n):
+        i = generate_num()
+        q = i // 16
+        r = i % 16
 
-    try:
-        bins[q] += 1
-    except IndexError:
-        print(i)
-        print(q, r)
-        print(f"bins[{q}]", bins[q])
+        try:
+            bins[q] += 1
+        except IndexError:
+            print(i)
+            print(q, r)
+            print(f"bins[{q}]", bins[q])
 
-x = range(16)
-y = bins
+    return bins
 
-print(bins)
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/{n}", tags=["read_root"])
+def read_root(n):
+    bins = binNums(int(n))
+    return {"bins": bins}
